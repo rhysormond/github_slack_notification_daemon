@@ -1,5 +1,6 @@
 extern crate serde;
 
+use chrono::{DateTime, Local};
 use serde::Serialize;
 
 use crate::github_notification::{GithubNotification, HasHtmlUrl};
@@ -26,6 +27,11 @@ impl SlackMessage {
             kind = notification.subject.kind,
             url = body.html_url,
         );
+        Self::new(message)
+    }
+
+    pub fn from_initialization_timestamp(now: DateTime<Local>) -> Self {
+        let message: String = format!("Initializing at {time}.", time = now.to_rfc3339());
         Self::new(message)
     }
 }
