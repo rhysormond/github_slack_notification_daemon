@@ -15,34 +15,34 @@ mod slack_message;
 /// https://developer.github.com/v3/activity/notifications/
 const GITHUB_API_URL: &str = "https://api.github.com/notifications";
 
-const POLLING_FREQUENCY: time::Duration = time::Duration::from_secs(60);
+const POLLING_FREQUENCY: time::Duration = time::Duration::from_secs(30);
 
 fn main() {
     let client: Client = Client::new();
-    let github_username: String =
-        env::var("GITHUB_USERNAME").expect("Expected a GITHUB_USERNAME env var.");
-    let github_token: String = env::var("GITHUB_TOKEN").expect("Expected a GITHUB_TOKEN env var.");
-    let slack_hook: String = env::var("SLACK_HOOK").expect("Expected a SLACK_HOOK env var.");
+    let github_username: String = env::var("GITHUB_USERNAME").expect("No GITHUB_USERNAME env var.");
+    let github_token: String = env::var("GITHUB_TOKEN").expect("No GITHUB_TOKEN env var.");
+    let slack_hook: String = env::var("SLACK_HOOK").expect("No SLACK_HOOK env var.");
 
-    let mut last_notification_time: DateTime<Local> = Local::now();
+    let mut last_fetch_time: DateTime<Local> = Local::now();
 
     let initialization_message: SlackMessage =
-        SlackMessage::from_initialization_timestamp(last_notification_time);
+        SlackMessage::new(format!("Initialized at {:?}", last_fetch_time));
     client
         .post(&slack_hook)
         .json::<SlackMessage>(&initialization_message)
         .send()
         .unwrap();
-    println!("Initialized at {:?}.", last_notification_time);
 
     loop {
-        last_notification_time = Local::now();
-
+        let time_before_fetch: DateTime<Local> = Local::now();
         let notifications: Vec<GithubNotification> = {
             let maybe_response = client
                 .get(GITHUB_API_URL)
                 .basic_auth(&github_username, Some(&github_token))
-                .query(&[("since", last_notification_time.to_rfc3339())])
+                .query(&[
+                    ("since", last_fetch_time.to_rfc3339()),
+                    ("all", String::from("true")),
+                ])
                 .send();
 
             match maybe_response {
@@ -53,7 +53,7 @@ fn main() {
                 Err(error) => panic!("Failed to query the GitHub notification API: {:?}.", error),
             }
         };
-        println!("Got notifications: {:?}.", notifications);
+        last_fetch_time = time_before_fetch;
 
         let messages: Vec<SlackMessage> = notifications
             .iter()
