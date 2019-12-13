@@ -12,7 +12,6 @@ pub struct Subject {
 #[derive(Deserialize, Debug)]
 pub struct GithubNotification {
     id: String,
-    private: Option<bool>,
     pub subject: Subject,
     reason: String,
     unread: bool,
