@@ -40,18 +40,20 @@ impl GithubClient {
     }
 
     fn get_html_url(&self, notification: GithubNotification) -> Result<NotificationWithUrl, Error> {
-        let response: Response = self.get(&notification.subject.url)?;
+        let response = self.get(&notification.subject.url)?;
         let url: HasHtmlUrl = response.json::<HasHtmlUrl>()?;
         Ok(NotificationWithUrl::new(notification, url))
     }
 
-    pub fn fetch_notifications(&self, since: DateTime<Local>) -> Result<Vec<NotificationWithUrl>, Error> {
-        let response: Response = self.get_notifications(since)?;
+    pub fn fetch_notifications(
+        &self,
+        since: DateTime<Local>,
+    ) -> Result<Vec<NotificationWithUrl>, Error> {
+        let response = self.get_notifications(since)?;
         let notifications: Vec<GithubNotification> = response.json::<Vec<GithubNotification>>()?;
         notifications
             .into_iter()
-            .map(|notification|
-                self.get_html_url(notification)
-            ).collect()
+            .map(|notification| self.get_html_url(notification))
+            .collect()
     }
 }
