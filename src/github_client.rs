@@ -1,6 +1,3 @@
-extern crate chrono;
-extern crate reqwest;
-
 use crate::github_notification::{GithubNotification, HasHtmlUrl, NotificationWithUrl};
 use chrono::{DateTime, Local};
 use reqwest::blocking::{Client, Response};

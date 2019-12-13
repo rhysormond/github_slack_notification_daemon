@@ -1,5 +1,3 @@
-extern crate reqwest;
-
 use reqwest::blocking::{Client, Response};
 use reqwest::Error;
 

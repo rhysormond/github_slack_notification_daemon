@@ -1,8 +1,6 @@
-extern crate serde;
-
 use serde::Serialize;
 
-use crate::github_notification::NotificationWithUrl;
+use crate::NotificationWithUrl;
 
 #[derive(Serialize, Debug)]
 pub struct SlackMessage {
