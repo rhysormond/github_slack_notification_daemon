@@ -272,7 +272,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "github-notifications"
+name = "github_notifications"
 version = "0.1.0"
 dependencies = [
  "chrono",
