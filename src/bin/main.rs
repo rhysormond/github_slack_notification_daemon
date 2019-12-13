@@ -2,7 +2,7 @@ extern crate github_notifications;
 
 use std::{env, thread, time};
 
-use chrono::Local;
+use chrono::{Duration, Local};
 
 use github_notifications::*;
 
@@ -16,9 +16,13 @@ fn main() {
     let github = GithubClient::new(github_username, github_token);
     let slack = SlackClient::new(slack_hook);
 
-    let mut last_fetch_time = Local::now();
+    let prefetch_time: Duration = Duration::hours(1);
+    let mut last_fetch_time = Local::now() - prefetch_time;
 
-    let initialization_message = SlackMessage::new(format!("Initialized at {:?}", last_fetch_time));
+    let initialization_message = SlackMessage::new(format!(
+        "Initializing at {:?} and fetching messages from the last {:?}",
+        last_fetch_time, prefetch_time,
+    ));
     slack.post(&initialization_message).unwrap();
 
     loop {
