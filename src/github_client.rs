@@ -1,6 +1,7 @@
 extern crate chrono;
 extern crate reqwest;
 
+use crate::github_notification::{GithubNotification, HasHtmlUrl, NotificationWithUrl};
 use chrono::{DateTime, Local};
 use reqwest::blocking::{Client, Response};
 use reqwest::Error;
@@ -23,7 +24,7 @@ impl GithubClient {
         }
     }
 
-    pub fn get_notifications(&self, since: DateTime<Local>) -> Result<Response, Error> {
+    fn get_notifications(&self, since: DateTime<Local>) -> Result<Response, Error> {
         self.client
             .get(GITHUB_API_URL)
             .basic_auth(&self.username, Some(&self.token))
@@ -31,10 +32,26 @@ impl GithubClient {
             .send()
     }
 
-    pub fn get(&self, api_url: &str) -> Result<Response, Error> {
+    fn get(&self, api_url: &str) -> Result<Response, Error> {
         self.client
             .get(api_url)
             .basic_auth(&self.username, Some(&self.token))
             .send()
+    }
+
+    fn get_html_url(&self, notification: GithubNotification) -> Result<NotificationWithUrl, Error> {
+        let response: Response = self.get(&notification.subject.url)?;
+        let url: HasHtmlUrl = response.json::<HasHtmlUrl>()?;
+        Ok(NotificationWithUrl::new(notification, url))
+    }
+
+    pub fn fetch_notifications(&self, since: DateTime<Local>) -> Result<Vec<NotificationWithUrl>, Error> {
+        let response: Response = self.get_notifications(since)?;
+        let notifications: Vec<GithubNotification> = response.json::<Vec<GithubNotification>>()?;
+        notifications
+            .into_iter()
+            .map(|notification|
+                self.get_html_url(notification)
+            ).collect()
     }
 }

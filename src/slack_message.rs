@@ -2,7 +2,7 @@ extern crate serde;
 
 use serde::Serialize;
 
-use crate::github_notification::{GithubNotification, HasHtmlUrl};
+use crate::github_notification::NotificationWithUrl;
 
 #[derive(Serialize, Debug)]
 pub struct SlackMessage {
@@ -20,11 +20,11 @@ impl SlackMessage {
         }
     }
 
-    pub fn from_github_notification(notification: &GithubNotification, body: HasHtmlUrl) -> Self {
+    pub fn from_notification(notification: &NotificationWithUrl) -> Self {
         let message: String = format!(
             "{kind} from GitHub at {url}",
             kind = notification.subject.kind,
-            url = body.html_url,
+            url = notification.url,
         );
         Self::new(message)
     }

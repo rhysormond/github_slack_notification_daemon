@@ -28,3 +28,18 @@ pub struct GithubNotification {
 pub struct HasHtmlUrl {
     pub html_url: String,
 }
+
+#[derive(Debug)]
+pub struct NotificationWithUrl {
+    pub subject: Subject,
+    pub url: String,
+}
+
+impl NotificationWithUrl {
+    pub fn new(notification: GithubNotification, url: HasHtmlUrl) -> Self {
+        Self {
+            subject: notification.subject,
+            url: url.html_url,
+        }
+    }
+}
