@@ -1,20 +1,11 @@
-extern crate chrono;
-extern crate reqwest;
+extern crate github_notifications;
 
 use std::{env, thread, time};
 
 use chrono::{DateTime, Local};
 use reqwest::Error;
 
-use crate::github_client::GithubClient;
-use crate::github_notification::NotificationWithUrl;
-use crate::slack_client::SlackClient;
-use crate::slack_message::SlackMessage;
-
-mod github_client;
-mod github_notification;
-mod slack_client;
-mod slack_message;
+use github_notifications::*;
 
 const POLLING_FREQUENCY: time::Duration = time::Duration::from_secs(30);
 
