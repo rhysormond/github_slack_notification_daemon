@@ -19,7 +19,7 @@ impl SlackMessage {
     }
 
     pub fn from_notification(notification: &NotificationWithUrl) -> Self {
-        let message: String = format!(
+        let message = format!(
             "{kind} from GitHub at {url}",
             kind = notification.subject.kind,
             url = notification.url,
