@@ -2,7 +2,7 @@ use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
 pub struct Subject {
-    title: String,
+    pub title: String,
     pub url: String,
     latest_comment_url: String,
     #[serde(rename = "type")]
@@ -13,7 +13,7 @@ pub struct Subject {
 pub struct GithubNotification {
     id: String,
     pub subject: Subject,
-    reason: String,
+    pub reason: String,
     unread: bool,
     updated_at: String,
     last_read_at: Option<String>,
@@ -28,14 +28,14 @@ pub struct HasHtmlUrl {
 
 #[derive(Debug)]
 pub struct NotificationWithUrl {
-    pub subject: Subject,
+    pub notification: GithubNotification,
     pub url: String,
 }
 
 impl NotificationWithUrl {
     pub fn new(notification: GithubNotification, url: HasHtmlUrl) -> Self {
         Self {
-            subject: notification.subject,
+            notification,
             url: url.html_url,
         }
     }
