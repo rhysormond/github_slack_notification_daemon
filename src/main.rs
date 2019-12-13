@@ -48,12 +48,16 @@ fn main() {
             match maybe_response {
                 Ok(response) => {
                     println!("Got response to notification request: {:?}.", response);
+                    last_fetch_time = time_before_fetch;
+                    println!("Setting last_fetch_time to {:?}", last_fetch_time);
                     response.json::<Vec<GithubNotification>>().unwrap()
                 }
-                Err(error) => panic!("Failed to query the GitHub notification API: {:?}.", error),
+                Err(error) => {
+                    println!("Failed to query the GitHub notification API: {:?}.", error);
+                    Vec::new()
+                }
             }
         };
-        last_fetch_time = time_before_fetch;
 
         let messages: Vec<SlackMessage> = notifications
             .iter()
