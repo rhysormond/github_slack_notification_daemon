@@ -20,8 +20,10 @@ impl SlackMessage {
 
     pub fn from_notification(notification: &NotificationWithUrl) -> Self {
         let message = format!(
-            "{kind} from GitHub at {url}",
-            kind = notification.subject.kind,
+            "{kind} - {title}\n*{reason}*\n{url}",
+            kind = notification.notification.subject.kind,
+            title = notification.notification.subject.title,
+            reason = notification.notification.reason,
             url = notification.url,
         );
         Self::new(message)
