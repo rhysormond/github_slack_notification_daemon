@@ -2,6 +2,13 @@ use serde::Serialize;
 
 use crate::NotificationWithUrl;
 
+/// A Slack message formatted for their incoming webhook API
+///
+/// # Arguments
+///
+/// * `text` - The text body of the post; supports markdown formatting
+/// * `icon_emoji` - A slack-formatted emoji name that should be used in place of an avatar
+/// * `username` - The username associated with the post
 #[derive(Serialize, Debug)]
 pub struct SlackMessage {
     text: String,
@@ -18,6 +25,7 @@ impl SlackMessage {
         }
     }
 
+    /// Formats a github notification into the text field of a slack message
     pub fn from_notification(notification: &NotificationWithUrl) -> Self {
         let message = format!(
             "{kind} - {title}\n*{reason}*\n{url}",

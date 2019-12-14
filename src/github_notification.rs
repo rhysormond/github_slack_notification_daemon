@@ -1,5 +1,12 @@
 use serde::Deserialize;
 
+/// The main body of a github notification API response
+///
+/// # Arguments
+///
+/// * `title` - The title of the subject of the notification (e.g. PR title)
+/// * `url` - The API url for getting more information about the subject
+/// * `kind` - The type of the subject (e.g. PR, Issue, etc.)
 #[derive(Deserialize, Debug)]
 pub struct Subject {
     pub title: String,
@@ -9,6 +16,12 @@ pub struct Subject {
     pub kind: String,
 }
 
+/// The top level fields in a github notification API response
+///
+/// # Arguments
+///
+/// * `subject` - The body of the notification
+/// * `reason` - The reason that the notification was sent
 #[derive(Deserialize, Debug)]
 pub struct GithubNotification {
     id: String,
@@ -20,12 +33,15 @@ pub struct GithubNotification {
     url: String,
 }
 
-/// This should eventually be parted into different things for PRs, Issues, etc.
+/// The HTML URL extracted from the response to a github get request to an API URL
+///
+/// NOTE[Rhys]: There many more fields in the response they depend on what api route we actually hit
 #[derive(Deserialize, Debug)]
 pub struct HasHtmlUrl {
     pub html_url: String,
 }
 
+/// A github notification bundled with an HTML url in addition to the original API one
 #[derive(Debug)]
 pub struct NotificationWithUrl {
     pub notification: GithubNotification,
