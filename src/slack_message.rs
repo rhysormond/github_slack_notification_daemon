@@ -24,9 +24,10 @@ impl SlackMessage {
             username: "Github Notification Daemon".to_string(),
         }
     }
+}
 
-    /// Formats a github notification into the text field of a slack message
-    pub fn from_notification(notification: &NotificationWithUrl) -> Self {
+impl std::convert::From<&NotificationWithUrl> for SlackMessage {
+    fn from(notification: &NotificationWithUrl) -> Self {
         let message = format!(
             "{kind} - {title}\n*{reason}*\n{url}",
             kind = notification.notification.subject.kind,
@@ -34,6 +35,7 @@ impl SlackMessage {
             reason = notification.notification.reason,
             url = notification.url,
         );
-        Self::new(message)
+
+        SlackMessage::new(message)
     }
 }
