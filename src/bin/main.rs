@@ -44,7 +44,7 @@ fn main() {
         };
 
         for notification in notifications {
-            let message = SlackMessage::from_notification(&notification);
+            let message = SlackMessage::from(&notification);
             slack.post(&message).unwrap();
         }
 
