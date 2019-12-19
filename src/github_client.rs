@@ -1,7 +1,8 @@
-use crate::github_notification::{GithubNotification, HasHtmlUrl, NotificationWithUrl};
 use chrono::{DateTime, Local};
 use reqwest::blocking::{Client, Response};
 use reqwest::Error;
+
+use crate::{GithubNotification, HasHtmlUrl, NotificationWithUrl};
 
 /// https://developer.github.com/v3/activity/notifications/
 const GITHUB_API_URL: &str = "https://api.github.com/notifications";
