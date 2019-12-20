@@ -1,7 +1,5 @@
 use serde::Serialize;
 
-use crate::NotificationWithUrl;
-
 /// A Slack message formatted for their incoming webhook API
 ///
 /// https://api.slack.com/block-kit
@@ -21,26 +19,12 @@ pub struct SlackMessage {
 }
 
 impl SlackMessage {
-    pub fn new(text: String) -> Self {
+    pub fn new(text: Box<dyn Markdownable>) -> Self {
         SlackMessage {
-            blocks: vec![SectionBlock::new(text)],
+            blocks: vec![SectionBlock::new(text.markdown())],
             icon_emoji: ":chart_with_upwards_trend:".to_string(),
             username: "Github Notification Daemon".to_string(),
         }
-    }
-}
-
-impl std::convert::From<&NotificationWithUrl> for SlackMessage {
-    fn from(notification: &NotificationWithUrl) -> Self {
-        let message = format!(
-            "{kind} - {title}\n*{reason}*\n{url}",
-            kind = notification.notification.subject.kind,
-            title = notification.notification.subject.title,
-            reason = notification.notification.reason,
-            url = notification.url,
-        );
-
-        Self::new(message)
     }
 }
 
@@ -85,5 +69,15 @@ impl TextField {
             kind: String::from("mrkdwn"),
             text,
         }
+    }
+}
+
+pub trait Markdownable {
+    fn markdown(&self) -> String;
+}
+
+impl Markdownable for String {
+    fn markdown(&self) -> String {
+        self.clone()
     }
 }

@@ -1,5 +1,7 @@
 use serde::Deserialize;
 
+use crate::Markdownable;
+
 /// The main body of a github notification API response
 ///
 /// # Arguments
@@ -54,5 +56,17 @@ impl NotificationWithUrl {
             notification,
             url: url.html_url,
         }
+    }
+}
+
+impl Markdownable for NotificationWithUrl {
+    fn markdown(&self) -> String {
+        format!(
+            "{kind} - {title}\n*{reason}*\n{url}",
+            kind = self.notification.subject.kind,
+            title = self.notification.subject.title,
+            reason = self.notification.reason,
+            url = self.url,
+        )
     }
 }

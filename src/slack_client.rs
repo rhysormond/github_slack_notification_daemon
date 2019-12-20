@@ -1,7 +1,7 @@
 use reqwest::blocking::{Client, Response};
 use reqwest::Error;
 
-use crate::slack_message::SlackMessage;
+use crate::{Markdownable, SlackMessage};
 
 /// A client to send messages to the slack incoming webhook API
 ///
@@ -23,11 +23,12 @@ impl SlackClient {
     }
 
     /// Posts a message to the slack incoming webhook API
-    pub fn post(&self, message: &SlackMessage) -> Result<Response, Error> {
-        println!("Sending slack message {}", serde_json::json!((message)));
+    pub fn post(&self, text: Box<dyn Markdownable>) -> Result<Response, Error> {
+        let message = &SlackMessage::new(text);
+        println!("Sending slack message {}", serde_json::json!(message));
         self.client
             .post(&self.webhook_url)
-            .json::<SlackMessage>(message)
+            .json::<SlackMessage>(&message)
             .send()
     }
 }
