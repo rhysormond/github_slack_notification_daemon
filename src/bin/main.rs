@@ -19,10 +19,10 @@ fn main() {
     let prefetch_time: Duration = Duration::hours(1);
     let mut last_fetch_time = Local::now() - prefetch_time;
 
-    let initialization_message = Box::new(format!(
+    let initialization_message = format!(
         "Initializing at {:?} and fetching messages from the last {:?}",
         last_fetch_time, prefetch_time,
-    ));
+    );
     slack.post(initialization_message).unwrap();
 
     loop {
@@ -40,13 +40,13 @@ fn main() {
             Err(error) => {
                 let msg = format!("Failed to get GitHub notifications: {:?}.", error);
                 println!("{}", msg);
-                slack.post(Box::new(msg)).unwrap();
+                slack.post(msg).unwrap();
                 Vec::new()
             }
         };
 
         for notification in notifications {
-            slack.post(Box::new(notification)).unwrap();
+            slack.post(notification).unwrap();
         }
 
         thread::sleep(POLLING_FREQUENCY);

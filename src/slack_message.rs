@@ -19,9 +19,9 @@ pub struct SlackMessage {
 }
 
 impl SlackMessage {
-    pub fn new(text: Box<dyn Markdownable>) -> Self {
+    pub fn new(text: String) -> Self {
         SlackMessage {
-            blocks: vec![SectionBlock::new(text.markdown())],
+            blocks: vec![SectionBlock::new(text)],
             icon_emoji: ":chart_with_upwards_trend:".to_string(),
             username: "Github Notification Daemon".to_string(),
         }
@@ -69,15 +69,5 @@ impl TextField {
             kind: String::from("mrkdwn"),
             text,
         }
-    }
-}
-
-pub trait Markdownable {
-    fn markdown(&self) -> String;
-}
-
-impl Markdownable for String {
-    fn markdown(&self) -> String {
-        self.clone()
     }
 }
