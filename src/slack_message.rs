@@ -4,7 +4,7 @@ use serde::Serialize;
 ///
 /// https://api.slack.com/block-kit
 ///
-/// TODO[Rhys] add support for more block types
+/// TODO: add support for more block types
 ///
 /// # Arguments
 ///

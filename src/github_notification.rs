@@ -35,7 +35,7 @@ pub struct GithubNotification {
 
 /// The HTML URL extracted from the response to a github get request to an API URL
 ///
-/// NOTE[Rhys]: There many more fields in the response they depend on what api route we actually hit
+/// NOTE: There many more fields in the response they depend on what api route we actually hit
 #[derive(Deserialize, Debug)]
 pub struct HasHtmlUrl {
     pub html_url: String,
