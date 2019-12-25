@@ -4,11 +4,13 @@ use std::{env, thread, time};
 
 use chrono::{Duration, Local};
 
+use futures::executor::block_on;
+
 use github_notifications::*;
 
 const POLLING_FREQUENCY: time::Duration = time::Duration::from_secs(30);
 
-fn main() {
+async fn main_loop() -> Result<(), reqwest::Error> {
     let github_username = env::var("GITHUB_USERNAME").expect("No GITHUB_USERNAME env var.");
     let github_token = env::var("GITHUB_TOKEN").expect("No GITHUB_TOKEN env var.");
     let slack_hook = env::var("SLACK_HOOK").expect("No SLACK_HOOK env var.");
@@ -23,12 +25,12 @@ fn main() {
         "Initializing at {:?} and fetching messages from the last {:?}",
         last_fetch_time, prefetch_time,
     );
-    slack.post(initialization_message).unwrap();
+    slack.post(initialization_message).await?;
 
     loop {
         let time_before_fetch = Local::now();
 
-        let maybe_notifications = github.fetch_notifications(last_fetch_time);
+        let maybe_notifications = github.fetch_notifications(last_fetch_time).await;
 
         let notifications = match maybe_notifications {
             Ok(notifications) => {
@@ -40,15 +42,19 @@ fn main() {
             Err(error) => {
                 let msg = format!("Failed to get GitHub notifications: {:?}.", error);
                 println!("{}", msg);
-                slack.post(msg).unwrap();
+                slack.post(msg).await?;
                 Vec::new()
             }
         };
 
         for notification in notifications {
-            slack.post(notification).unwrap();
+            slack.post(notification).await?;
         }
 
         thread::sleep(POLLING_FREQUENCY);
     }
+}
+
+fn main() -> Result<(), reqwest::Error> {
+    Ok(block_on(main_loop())?)
 }
