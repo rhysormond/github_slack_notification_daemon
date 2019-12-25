@@ -42,7 +42,7 @@ fn main() {
             }
             Err(error) => {
                 let msg = format!("Failed to get GitHub notifications: {:?}.", error);
-                error!("Failed to get GitHub notifications: {:?}.", error);
+                error!("{}", msg);
                 slack.post(msg).unwrap();
                 Vec::new()
             }
