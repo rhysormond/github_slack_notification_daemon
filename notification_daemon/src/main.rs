@@ -6,9 +6,12 @@ use chrono::{Duration, Local};
 
 use github_notifications::*;
 
+use log::{debug, error, info};
+
 const POLLING_FREQUENCY: time::Duration = time::Duration::from_secs(30);
 
 fn main() {
+    env_logger::init();
     let github_username = env::var("GITHUB_USERNAME").expect("No GITHUB_USERNAME env var.");
     let github_token = env::var("GITHUB_TOKEN").expect("No GITHUB_TOKEN env var.");
     let slack_hook = env::var("SLACK_HOOK").expect("No SLACK_HOOK env var.");
@@ -32,14 +35,14 @@ fn main() {
 
         let notifications = match maybe_notifications {
             Ok(notifications) => {
-                println!("Got notifications from github: {:?}.", notifications);
+                info!("Got notifications from github: {:?}.", notifications);
                 last_fetch_time = time_before_fetch;
-                println!("Setting last_fetch_time to {:?}", last_fetch_time);
+                debug!("Setting last_fetch_time to {:?}", last_fetch_time);
                 notifications
             }
             Err(error) => {
                 let msg = format!("Failed to get GitHub notifications: {:?}.", error);
-                println!("{}", msg);
+                error!("{}", msg);
                 slack.post(msg).unwrap();
                 Vec::new()
             }
