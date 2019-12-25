@@ -11,7 +11,7 @@ use serde::Deserialize;
 pub struct Subject {
     pub title: String,
     pub url: String,
-    latest_comment_url: String,
+    latest_comment_url: Option<String>,
     #[serde(rename = "type")]
     pub kind: String,
 }
