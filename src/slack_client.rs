@@ -30,6 +30,7 @@ impl SlackClient {
         self.client
             .post(&self.webhook_url)
             .json::<SlackMessage>(&message)
-            .send().await
+            .send()
+            .await
     }
 }

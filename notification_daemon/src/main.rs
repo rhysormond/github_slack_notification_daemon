@@ -4,15 +4,21 @@ use std::{env, thread, time};
 
 use chrono::{Duration, Local};
 
-use futures::executor::block_on;
-
 use github_notifications::*;
 
 use log::{debug, error, info};
 
 const POLLING_FREQUENCY: time::Duration = time::Duration::from_secs(30);
 
-async fn main_loop() -> Result<(), Box<dyn std::error::Error>> {
+/// Pre-main setup.
+fn pre_main() {
+    env_logger::init();
+}
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    pre_main();
+
     let github_username = env::var("GITHUB_USERNAME").expect("No GITHUB_USERNAME env var.");
     let github_token = env::var("GITHUB_TOKEN").expect("No GITHUB_TOKEN env var.");
     let slack_hook = env::var("SLACK_HOOK").expect("No SLACK_HOOK env var.");
@@ -55,12 +61,4 @@ async fn main_loop() -> Result<(), Box<dyn std::error::Error>> {
 
         thread::sleep(POLLING_FREQUENCY);
     }
-}
-
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Pre-main setup
-    env_logger::init();
-
-    // Execute the async loop
-    Ok(block_on(main_loop())?)
 }
