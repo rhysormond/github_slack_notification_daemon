@@ -10,3 +10,9 @@ serde = { version = "1.0.103", features = ["derive"] }
 serde_json = "1.0.44"
 chrono = "0.4.10"
 futures = "0.3.1"
+log = "0.4.8"
+
+[workspace]
+# The executable that uses this library is a member of this workspace so that it
+# can have dependencies github_notifications shouldn't have
+members = ["notification_daemon"]

@@ -8,9 +8,11 @@ use futures::executor::block_on;
 
 use github_notifications::*;
 
+use log::{debug, error, info};
+
 const POLLING_FREQUENCY: time::Duration = time::Duration::from_secs(30);
 
-async fn main_loop() -> Result<(), reqwest::Error> {
+async fn main_loop() -> Result<(), Box<dyn std::error::Error>> {
     let github_username = env::var("GITHUB_USERNAME").expect("No GITHUB_USERNAME env var.");
     let github_token = env::var("GITHUB_TOKEN").expect("No GITHUB_TOKEN env var.");
     let slack_hook = env::var("SLACK_HOOK").expect("No SLACK_HOOK env var.");
@@ -34,14 +36,14 @@ async fn main_loop() -> Result<(), reqwest::Error> {
 
         let notifications = match maybe_notifications {
             Ok(notifications) => {
-                println!("Got notifications from github: {:?}.", notifications);
+                info!("Got notifications from github: {:?}.", notifications);
                 last_fetch_time = time_before_fetch;
-                println!("Setting last_fetch_time to {:?}", last_fetch_time);
+                debug!("Setting last_fetch_time to {:?}", last_fetch_time);
                 notifications
             }
             Err(error) => {
                 let msg = format!("Failed to get GitHub notifications: {:?}.", error);
-                println!("{}", msg);
+                error!("{}", msg);
                 slack.post(msg).await?;
                 Vec::new()
             }
@@ -55,6 +57,10 @@ async fn main_loop() -> Result<(), reqwest::Error> {
     }
 }
 
-fn main() -> Result<(), reqwest::Error> {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Pre-main setup
+    env_logger::init();
+
+    // Execute the async loop
     Ok(block_on(main_loop())?)
 }
