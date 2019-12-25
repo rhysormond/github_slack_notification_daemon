@@ -35,14 +35,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
     slack.post(initialization_message).await?;
 
+    debug!("Initialization complete. Entering main loop!");
     loop {
         let time_before_fetch = Local::now();
-
+        debug!("Fetching notifications since {:?}", last_fetch_time);
         let maybe_notifications = github.fetch_notifications(last_fetch_time).await;
 
         let notifications = match maybe_notifications {
             Ok(notifications) => {
-                info!("Got notifications from github: {:?}.", notifications);
                 last_fetch_time = time_before_fetch;
                 debug!("Setting last_fetch_time to {:?}", last_fetch_time);
                 notifications
