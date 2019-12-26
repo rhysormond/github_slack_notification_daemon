@@ -4,7 +4,8 @@
 //! - [GithubNotification](crate::github_notification::GithubNotification)
 //!
 //! There are probably other important things, too, but I didn't document those.
-pub use github_client::GithubClient;
+pub use github_client::GithubNotificationClient;
+pub use github_client::NotificationClient;
 pub use github_notification::{GithubNotification, HasHtmlUrl, NotificationWithUrl};
 pub use slack_client::SlackClient;
 pub use slack_message::SlackMessage;

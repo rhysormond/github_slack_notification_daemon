@@ -6,13 +6,14 @@ use chrono::{Duration, Local};
 
 use github_notifications::*;
 
-use log::{debug, error, info};
+use log::{debug, error};
 
 const POLLING_FREQUENCY: time::Duration = time::Duration::from_secs(30);
 
 /// Pre-main setup.
 fn pre_main() {
     env_logger::init();
+    debug!("Finished pre-main initialization");
 }
 
 #[tokio::main]
@@ -23,7 +24,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let github_token = env::var("GITHUB_TOKEN").expect("No GITHUB_TOKEN env var.");
     let slack_hook = env::var("SLACK_HOOK").expect("No SLACK_HOOK env var.");
 
-    let github = GithubClient::new(github_username, github_token);
+    let github = NotificationClient::new(github_username, github_token);
     let slack = SlackClient::new(slack_hook);
 
     let prefetch_time: Duration = Duration::hours(1);
@@ -39,7 +40,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     loop {
         let time_before_fetch = Local::now();
         debug!("Fetching notifications since {:?}", last_fetch_time);
-        let maybe_notifications = github.fetch_notifications(last_fetch_time).await;
+        let maybe_notifications = github.get_humanized_notifications(last_fetch_time).await;
 
         let notifications = match maybe_notifications {
             Ok(notifications) => {
