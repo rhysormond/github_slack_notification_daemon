@@ -11,6 +11,7 @@ serde_json = "1.0.44"
 chrono = "0.4.10"
 futures = "0.3.1"
 log = "0.4.8"
+async-trait = "0.1.21"
 
 [workspace]
 # The executable that uses this library is a member of this workspace so that it

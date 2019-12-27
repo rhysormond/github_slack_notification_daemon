@@ -16,6 +16,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9267dff192e68f3399525901e709a48c1d3982c9c072fa32f2127a0cb0babf14"
 
 [[package]]
+name = "async-trait"
+version = "0.1.21"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8b6dd385bb33043b833ba049048d57bdbb4d654a121ed68c71871ca51ff67070"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "atty"
 version = "0.2.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -390,6 +401,7 @@ dependencies = [
 name = "github_notifications"
 version = "0.1.0"
 dependencies = [
+ "async-trait",
  "chrono",
  "futures",
  "log",
