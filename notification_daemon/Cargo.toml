@@ -9,3 +9,7 @@ github_notifications = { version = "0.1.0", path = "../" }
 env_logger = "0.7.1"
 log = "0.4.8"
 chrono = "0.4.10"
+
+# We can't upgrade to 0.2.0 mainline because github_notifications depends on
+# reqwest 0.10.0-alpha2, which in turn depends on this version of tokio
+tokio = {version = "0.2.0-alpha.6", features = ["macros"] }

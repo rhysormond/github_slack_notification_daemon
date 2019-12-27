@@ -10,8 +10,15 @@ use log::{debug, error, info};
 
 const POLLING_FREQUENCY: time::Duration = time::Duration::from_secs(30);
 
-fn main() {
+/// Pre-main setup.
+fn pre_main() {
     env_logger::init();
+}
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    pre_main();
+
     let github_username = env::var("GITHUB_USERNAME").expect("No GITHUB_USERNAME env var.");
     let github_token = env::var("GITHUB_TOKEN").expect("No GITHUB_TOKEN env var.");
     let slack_hook = env::var("SLACK_HOOK").expect("No SLACK_HOOK env var.");
@@ -26,16 +33,16 @@ fn main() {
         "Initializing at {:?} and fetching messages from the last {:?}",
         last_fetch_time, prefetch_time,
     );
-    slack.post(initialization_message).unwrap();
+    slack.post(initialization_message).await?;
 
+    debug!("Initialization complete. Entering main loop!");
     loop {
         let time_before_fetch = Local::now();
-
-        let maybe_notifications = github.fetch_notifications(last_fetch_time);
+        debug!("Fetching notifications since {:?}", last_fetch_time);
+        let maybe_notifications = github.fetch_notifications(last_fetch_time).await;
 
         let notifications = match maybe_notifications {
             Ok(notifications) => {
-                info!("Got notifications from github: {:?}.", notifications);
                 last_fetch_time = time_before_fetch;
                 debug!("Setting last_fetch_time to {:?}", last_fetch_time);
                 notifications
@@ -43,13 +50,13 @@ fn main() {
             Err(error) => {
                 let msg = format!("Failed to get GitHub notifications: {:?}.", error);
                 error!("{}", msg);
-                slack.post(msg).unwrap();
+                slack.post(msg).await?;
                 Vec::new()
             }
         };
 
         for notification in notifications {
-            slack.post(notification).unwrap();
+            slack.post(notification).await?;
         }
 
         thread::sleep(POLLING_FREQUENCY);
