@@ -6,7 +6,7 @@ use chrono::{Duration, Local};
 
 use github_notifications::*;
 
-use log::{debug, error, info};
+use log::{debug, error};
 
 const POLLING_FREQUENCY: time::Duration = time::Duration::from_secs(30);
 
