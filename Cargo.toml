@@ -16,3 +16,4 @@ log = "0.4.8"
 # The executable that uses this library is a member of this workspace so that it
 # can have dependencies github_notifications shouldn't have
 members = ["notification_daemon"]
+default-members = ["notification_daemon"]
